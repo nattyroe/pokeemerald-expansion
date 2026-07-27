@@ -1059,7 +1059,7 @@ enum __attribute__((packed)) Species
     SPECIES_YAMASK_GALAR = 991,
     SPECIES_STUNFISK_GALAR = 992,
 
-    //Hisuian Forms
+    // Hisuian Forms
     SPECIES_GROWLITHE_HISUI = 993,
     SPECIES_ARCANINE_HISUI = 994,
     SPECIES_VOLTORB_HISUI = 995,
@@ -1700,4 +1700,4 @@ enum __attribute__((packed)) Species
 
 #define SPECIES_SHINY_TAG 5000
 
-#endif  // GUARD_CONSTANTS_SPECIES_H
+#endif // GUARD_CONSTANTS_SPECIES_H
