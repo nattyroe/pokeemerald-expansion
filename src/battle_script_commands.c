@@ -10021,8 +10021,6 @@ static u32 ComputeCaptureOdds(u32 wildMonBattler, u32 playerBattler)
     struct BallData ball;
     ComputeBallData(wildMonBattler, playerBattler, &ball);
 
-    if (ball.guaranteedCapture)
-        return CAPTURE_GUARANTEED;
     struct BattlePokemon *battleMon = &gBattleMons[wildMonBattler];
     u32 odds = (battleMon->maxHP * 3 - battleMon->hp * 2);
     s32 catchRate;
@@ -10071,7 +10069,10 @@ static u32 ComputeCaptureOdds(u32 wildMonBattler, u32 playerBattler)
     if (battleMon->species != SPECIES_DITTO)
     {
         odds = 0;
+        return odds;
     }
+    if (ball.guaranteedCapture)
+        return CAPTURE_GUARANTEED;
     return odds;
 }
 
