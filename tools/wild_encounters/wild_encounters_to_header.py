@@ -21,14 +21,14 @@ class Config:
             lines = config_file.readlines()
             for line in lines:
                 self.ParseTimeConfig(line)
-        
+
         if self.time_encounters == None:
             raise Exception("OW_TIME_OF_DAY_ENCOUNTERS not defined.")
         if self.disable_time_fallback == None:
             raise Exception("OW_TIME_OF_DAY_DISABLE_FALLBACK not defined.")
         if self.time_fallback == None:
             raise Exception("OW_TIME_OF_DAY_FALLBACK not defined.")
-    
+
     def ParseTimeEnum(self, rtc_constants_file_name):
         with open(rtc_constants_file_name, 'r') as rtc_constants_file:
             DEFAULT_TIME_PAT = re.compile(r"enum\s+TimeOfDay\s*\{(?P<rtc_val>[\s*\w+,\=\d*]+)\s*\}\s*\;")
@@ -70,7 +70,7 @@ class WildEncounterAssembler:
         self.output_file = output_file
         self.json_data = json_data
         self.config = config
-    
+
     def WriteLine(self, line="", indents = 0):
         self.output_file.write(4 * indents * " " + line + "\n")
 
@@ -101,7 +101,7 @@ class WildEncounterAssembler:
                         for group_name, indices in groups.items():
                             for index in indices:
                                 group_name_mapping[index] = "_" + group_name.upper()
-                    
+
                     for idx, rate in enumerate(encounter_rates):
                         macro_name = macro_base + group_name_mapping[idx] + "_SLOT_" + str(idx)
                         macro_value = str(rate)
@@ -118,7 +118,7 @@ class WildEncounterAssembler:
                             self.WriteMacro(macro_total_name, "(" + previous_macro + ")")
                     macro_total_name = macro_base + group_name_mapping[-1] + "_TOTAL"
                     self.WriteLine()
-    
+
     def WriteMonInfos(self, name, mons, encounter_rate):
         info_name = name + "Info"
         self.WriteLine(f"const struct WildPokemon {name}[] =")
@@ -133,7 +133,7 @@ class WildEncounterAssembler:
         self.WriteLine()
         self.WriteLine(f"const struct WildPokemonInfo {info_name} = {{ {encounter_rate}, {name} }};")
         self.WriteLine()
-    
+
     def WriteTerminator(self):
         self.WriteLine("{", 1)
         self.WriteLine(".mapGroup = MAP_GROUP(MAP_UNDEFINED),", 2)
@@ -164,12 +164,12 @@ class WildEncounterAssembler:
             map_group = map_data["mapGroup"]
             map_num = map_data["mapNum"]
             version = "EMERALD"
-            if "FireRed" in shared_label:
-                version = "FIRERED"
-            elif "LeafGreen" in shared_label:
-                version = "LEAFGREEN"
-            
-            self.WriteLine(f"#ifdef {version}")
+            # if "FireRed" in shared_label:
+            #     version = "FIRERED"
+            # elif "LeafGreen" in shared_label:
+            #     version = "LEAFGREEN"
+
+            # self.WriteLine(f"#ifdef {version}")
 
             self.WriteLine("{", 1)
             self.WriteLine(f".mapGroup = {map_group},", 2)
@@ -192,10 +192,10 @@ class WildEncounterAssembler:
                     self.WriteLine(f".{member_name} = {value},", 5)
 
                 self.WriteLine("},", 3)
-            
+
             self.WriteLine("},", 2)
             self.WriteLine("},", 1)
-            self.WriteLine(f"#endif")
+            # self.WriteLine(f"#endif")
         self.WriteTerminator()
         self.WriteLine("};")
 
@@ -236,17 +236,17 @@ class WildEncounterAssembler:
                 headers["data"][shared_label]["mapGroup"] = map_group
                 headers["data"][shared_label]["mapNum"] = map_num
 
-                version = "EMERALD"
-                if "FireRed" in shared_label:
-                    version = "FIRERED"
-                elif "LeafGreen" in shared_label:
-                    version = "LEAFGREEN"
-                self.WriteLine(f"#ifdef {version}")
+                # version = "EMERALD"
+                # if "FireRed" in shared_label:
+                #     version = "FIRERED"
+                # elif "LeafGreen" in shared_label:
+                #     version = "LEAFGREEN"
+                # self.WriteLine(f"#ifdef {version}")
                 for mon_type in self.config.mon_types:
                     if mon_type not in map_encounters:
                         headers["data"][shared_label][mon_type] = "NULL"
                         continue
-                    
+
                     mons_entry = map_encounters[mon_type]
                     encounter_rate = mons_entry["encounter_rate"]
                     mons = mons_entry["mons"]
@@ -254,7 +254,7 @@ class WildEncounterAssembler:
                     mon_array_name = base_label + "_" + mon_type.title().replace("_", "")
                     self.WriteMonInfos(mon_array_name, mons, encounter_rate)
                     headers["data"][shared_label][time][mon_type] = mon_array_name + "Info"
-                self.WriteLine(f"#endif")
+                # self.WriteLine(f"#endif")
 
             self.WritePokemonHeaders(headers)
 
@@ -271,7 +271,7 @@ def main():
     with open('src/data/wild_encounters.json', 'r') as json_file:
         json_data = json.load(json_file)
         ConvertToHeaderFile(json_data)
-        
+
 
 if __name__ == '__main__':
     main()

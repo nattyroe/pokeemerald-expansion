@@ -9,7 +9,7 @@ Debug_ShowFieldMessageStringVar4::
 	goto Debug_MessageEnd
 
 Debug_CheatStart::
-	setflag FLAG_SYS_POKEMON_GET
+	setflag FLAG_SYS_POKEMON_GET_HOENN
 	setflag FLAG_RESCUED_BIRCH
 	setflag FLAG_HIDE_ROUTE_101_BIRCH_ZIGZAGOON_BATTLE
 	setflag FLAG_ADVENTURE_STARTED
@@ -70,7 +70,7 @@ Debug_CheatStart::
 	end
 
 Debug_CheatStartFrlg::
-	setflag FLAG_SYS_POKEMON_GET
+	setflag FLAG_SYS_POKEMON_GET_KANTO
 	setflag FLAG_PALLET_LADY_NOT_BLOCKING_SIGN
 	setflag FLAG_OPENED_START_MENU
 	setflag FLAG_VISITED_OAKS_LAB

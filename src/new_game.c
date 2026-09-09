@@ -65,10 +65,9 @@ EWRAM_DATA bool8 gDifferentSaveFile = FALSE;
 EWRAM_DATA bool8 gEnableContestDebugging = FALSE;
 
 static const struct ContestWinner sContestWinnerPicDummy =
-{
-    .monName = _(""),
-    .trainerName = _("")
-};
+    {
+        .monName = _(""),
+        .trainerName = _("")};
 
 void SetTrainerId(u32 trainerId, u8 *dst)
 {
@@ -212,12 +211,10 @@ void NewGameInitData(void)
     ResetLotteryCorner();
     UpdateDailySeed();
     WarpToTruck();
-    if (IS_FRLG)
-        RunScriptImmediately(EventScript_ResetAllMapFlagsFrlg);
-    else
-        RunScriptImmediately(EventScript_ResetAllMapFlags);
+    RunScriptImmediately(EventScript_ResetAllMapFlagsFrlg);
+    RunScriptImmediately(EventScript_ResetAllMapFlags);
 #if IS_FRLG
-        StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
+    StringCopy(gSaveBlock1Ptr->rivalName, rivalName);
 #endif
     ResetMiniGamesRecords();
     InitUnionRoomChatRegisteredTexts();

@@ -51,7 +51,7 @@ PalletTown_ProfessorOaksLab_OnFrame::
 	map_script_2 VAR_MAP_SCENE_PALLET_TOWN_PROFESSOR_OAKS_LAB, 7, PalletTown_ProfessorOaksLab_EventScript_EnterForNationalDexScene
 	.2byte 0
 
-PalletTown_ProfessorOaksLab_EventScript_EnterForNationalDexScene:: @ 8169002 
+PalletTown_ProfessorOaksLab_EventScript_EnterForNationalDexScene:: @ 8169002
 	lockall
 	setvar VAR_FACING, DIR_NORTH
 	textcolor NPC_TEXT_COLOR_MALE
@@ -1115,7 +1115,7 @@ PalletTown_ProfessorOaksLab_EventScript_ChoseStarter::
 	removeobject VAR_LAST_TALKED
 	msgbox PalletTown_ProfessorOaksLab_Text_OakThisMonIsEnergetic
 	call EventScript_RestorePrevTextColor
-	setflag FLAG_SYS_POKEMON_GET
+	setflag FLAG_SYS_POKEMON_GET_KANTO
 	setflag FLAG_PALLET_LADY_NOT_BLOCKING_SIGN
 	givemon PLAYER_STARTER_SPECIES, 5
 	copyvar VAR_STARTER_MON, PLAYER_STARTER_NUM
