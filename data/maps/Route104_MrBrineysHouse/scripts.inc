@@ -23,6 +23,7 @@ Route104_MrBrineysHouse_EventScript_Briney::
 	lock
 	faceplayer
 	call_if_unset FLAG_MR_BRINEY_SAILING_INTRO, Route104_MrBrineysHouse_EventScript_SailingIntro
+	goto_if_unset FLAG_DELIVERED_OLD_MAN_COFFEE, Route104_MrBrineysHouse_EventScript_SailKantoFirst
 	goto_if_unset FLAG_DELIVERED_STEVEN_LETTER, Route104_MrBrineysHouse_EventScript_SailBothDeliveries
 	goto_if_unset FLAG_DELIVERED_DEVON_GOODS, Route104_MrBrineysHouse_EventScript_SailDeliverPackage
 	goto Route104_MrBrineysHouse_EventScript_WhereAreWeBound
@@ -42,8 +43,15 @@ Route104_MrBrineysHouse_EventScript_WhereAreWeBound::
 	multichoicedefault 20, 8, MULTI_BRINEY_OFF_DEWFORD, 1, FALSE
 	switch VAR_RESULT
 	case 0, Route104_MrBrineysHouse_EventScript_SailToDewford
-	case 1, Route104_MrBrineysHouse_EventScript_DeclineSailing
+	case 1, Route104_MrBrineysHouse_EventScript_SailToKanto
+	case 2, Route104_MrBrineysHouse_EventScript_DeclineSailing
 	case MULTI_B_PRESSED, Route104_MrBrineysHouse_EventScript_DeclineSailing
+	end
+
+Route104_MrBrineysHouse_EventScript_SailKantoFirst::
+	msgbox Route104_MrBrineysHouse_Text_NeedToMakeDeliveriesSailToKanto, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, Route104_MrBrineysHouse_EventScript_DeclineDeliverySailing
+	goto Route104_MrBrineysHouse_EventScript_SailToKanto
 	end
 
 Route104_MrBrineysHouse_EventScript_SailBothDeliveries::
@@ -66,6 +74,22 @@ Route104_MrBrineysHouse_EventScript_DeclineDeliverySailing::
 Route104_MrBrineysHouse_EventScript_DeclineSailing::
 	msgbox Route104_MrBrineysHouse_Text_TellMeWheneverYouWantToSail, MSGBOX_DEFAULT
 	release
+	end
+
+Route104_MrBrineysHouse_EventScript_SailToKanto::
+	msgbox Route104_MrBrineysHouse_Text_SetSailForKanto, MSGBOX_DEFAULT
+	call EventScript_BackupMrBrineyLocation
+	setvar VAR_BOARD_BRINEY_BOAT_STATE, 3
+	clearflag FLAG_HIDE_ROUTE_104_MR_BRINEY
+	setflag FLAG_HIDE_BRINEYS_HOUSE_MR_BRINEY
+	setflag FLAG_HIDE_BRINEYS_HOUSE_PEEKO
+	setvar VAR_RUSTBORO_CITY_STATE, 8
+	setvar VAR_ROUTE104_STATE, 2
+	setflag FLAG_HIDE_RUSTBORO_CITY_RIVAL
+	setflag FLAG_HIDE_ROUTE_104_RIVAL
+	warp MAP_ROUTE104, 13, 51
+	waitstate
+	releaseall
 	end
 
 Route104_MrBrineysHouse_EventScript_SailToDewford::
@@ -105,13 +129,19 @@ Route104_MrBrineysHouse_Text_ItsYouLetsSailToDewford:
 	.string "What's that?\n"
 	.string "You want to sail with me?\p"
 	.string "Hmhm…\p"
-	.string "You have a LETTER bound for DEWFORD\n"
+	.string "You have coffee bound for VIRIDIAN\n"
+	.string "in KANTO, a LETTER bound for DEWFORD,\n"
 	.string "and a package for SLATEPORT, then?\p"
 	.string "Quite the busy life you must lead!\p"
 	.string "But, certainly, what you're asking is\n"
 	.string "no problem at all.\p"
 	.string "You've come to the right man!\n"
-	.string "We'll set sail for DEWFORD.$"
+	.string "We'll set sail then.$"
+
+Route104_MrBrineysHouse_Text_SetSailForKanto:
+	.string "MR. BRINEY: KANTO it is, then!\p"
+	.string "Anchors aweigh!\n"
+	.string "PEEKO, we're setting sail, my darling!$"
 
 Route104_MrBrineysHouse_Text_SetSailForDewford:
 	.string "MR. BRINEY: DEWFORD it is, then!\p"
@@ -123,6 +153,14 @@ Route104_MrBrineysHouse_Text_DeclineDeliverySail:
 	.string "Your deliveries can wait?\p"
 	.string "You just go on and tell me whenever\n"
 	.string "you want to set sail!$"
+
+Route104_MrBrineysHouse_Text_NeedToMakeDeliveriesSailToKanto:
+	.string "MR. BRINEY: Ahoy!\n"
+	.string "So your uncle in Kanto needs coffee?\p"
+	.string "That sounds like the priority.\p"
+	.string "What you need me to do is no problem\n"
+	.string "at all--I'm the man for the job!\p"
+	.string "First, we'll set sail for KANTO.$"
 
 Route104_MrBrineysHouse_Text_NeedToMakeDeliveriesSailToDewford:
 	.string "MR. BRINEY: Ahoy!\n"

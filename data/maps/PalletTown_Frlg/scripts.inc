@@ -2,6 +2,7 @@
 
 PalletTown_Frlg_MapScripts::
 	map_script MAP_SCRIPT_ON_TRANSITION, PalletTown_OnTransition
+	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, PalletTown_OnWarp
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, PalletTown_OnFrame
 	.byte 0
 
@@ -36,7 +37,16 @@ PalletTown_EventScript_MoveSignLadyToRouteEntrance::
 
 PalletTown_OnFrame::
 	map_script_2 VAR_MAP_SCENE_PALLET_TOWN_OAK, 2, PalletTown_EventScript_OakRatingScene
+	map_script_2 VAR_MAP_SCENE_PALLET_TOWN_BOAT, 1, PalletTown_EventScript_ArriveInKantoByBoat
 	.2byte 0
+
+PalletTown_OnWarp::
+	map_script_2 VAR_MAP_SCENE_PALLET_TOWN_BOAT, 1, PalletTown_EventScript_ReadyPlayerForScene
+	.2byte 0
+
+PalletTown_EventScript_ReadyPlayerForScene::
+	turnobject LOCALID_PLAYER, DIR_NORTH
+	end
 
 @ Oak approaches player after exiting their house post Elite Four to check if they should receieve the National Dex
 PalletTown_EventScript_OakRatingScene::
@@ -94,6 +104,35 @@ PalletTown_EventScript_NotEnoughMonsForNationalDex::
 PalletTown_EventScript_NotBeenToOneIslandYet::
 	msgbox PalletTown_Text_OakYouEnjoyingTraveling
 	goto PalletTown_EventScript_EndOakRatingScene
+	end
+
+PalletTown_EventScript_ArriveInKantoByBoat::
+	lockall
+	call Common_EventScript_StopBrineysBoatMusic
+	showobjectat LOCALID_PLAYER, MAP_PALLET_TOWN
+	applymovement LOCALID_PLAYER, Route104_Movement_PlayerMoveForBrineyUp
+	waitmovement 0
+	clearflag FLAG_HIDE_MR_BRINEY_PALLET_TOWN
+	addobject LOCALID_KANTO_BRINEY
+	setobjectxyperm LOCALID_KANTO_BRINEY, 9, 16
+	setobjectsubpriority LOCALID_KANTO_BRINEY, MAP_PALLET_TOWN, 0
+	waitmovement 0
+	addobject LOCALID_KANTO_BOAT
+	clearflag FLAG_HIDE_MR_BRINEY_BOAT_PALLET_TOWN
+	call Common_EventScript_StopBrineysBoatMusic
+	setflag FLAG_HIDE_ROUTE_104_MR_BRINEY
+	setflag FLAG_HIDE_ROUTE_104_MR_BRINEY_BOAT
+	hideobjectat LOCALID_ROUTE104_BRINEY, MAP_ROUTE104
+	hideobjectat LOCALID_ROUTE104_BOAT, MAP_ROUTE104
+	copyvar VAR_BRINEY_LOCATION, VAR_0x8008
+	resetobjectsubpriority LOCALID_PLAYER, MAP_ROUTE104
+	resetobjectsubpriority LOCALID_KANTO_BRINEY, MAP_PALLET_TOWN
+	copyobjectxytoperm LOCALID_KANTO_BRINEY
+	setvar VAR_BOARD_BRINEY_BOAT_STATE, 0
+	setvar VAR_MAP_SCENE_PALLET_TOWN_BOAT, 0
+	goto_if_unset FLAG_DELIVERED_OLD_MAN_COFFEE, Route104_EventScript_DeliverCoffeeReminder
+	goto_if_set FLAG_DELIVERED_OLD_MAN_COFFEE, Route104_EventScript_LandedInKanto
+	releaseall
 	end
 
 PalletTown_Movement_OakWalkToPlayersDoor::
@@ -545,4 +584,161 @@ PalletTown_Text_PressStartToOpenMenuCopy::
 	.string "TRAINER TIPS!\p"
 	.string "Press START to open the MENU!$"
 
+Route104_EventScript_DeliverCoffeeReminder::
+	msgbox Route104_Text_LandedInKantoDeliverCoffee, MSGBOX_DEFAULT
+	releaseall
+	end
 
+Route104_EventScript_LandedInKanto::
+	msgbox PalletTown_Text_BrineyLandedInKanto, MSGBOX_DEFAULT
+	releaseall
+	end
+
+Route104_Text_LandedInKantoDeliverCoffee:
+	.string "MR. BRINEY: Ahoy!\n"
+	.string "We've hit land in KANTO.\p"
+	.string "I suppose you're off to deliver that\n"
+	.string "COFFEE to your Uncle!$"
+
+PalletTown_Text_BrineyLandedInKanto:
+	.string "MR. BRINEY: Ahoy!\n"
+	.string "We've hit land in KANTO!\p"
+	.string "You just go on and tell me whenever\n"
+	.string "you want to set sail again!$"
+
+Route104_Movement_BrineyBoatEntranceDown:
+	walk_down
+	walk_down
+	walk_in_place_faster_up
+	step_end
+
+Route104_Movement_BrineyExitBoatUp:
+	walk_up
+	step_end
+
+Route104_Movement_PlayerExitBoatUp:
+	walk_up
+	walk_up
+	step_end
+
+Route104_Movement_PlayerMoveForBrineyUp:
+	walk_up
+	walk_in_place_faster_down
+	step_end
+
+PalletTown_EventScript_Briney::
+	lock
+	faceplayer
+	goto_if_unset FLAG_DELIVERED_OLD_MAN_COFFEE, PalletTown_EventScript_HaveNotDeliveredCoffee
+	goto PalletTown_EventScript_DeliveredCoffee
+	end
+
+PalletTown_EventScript_HaveNotDeliveredCoffee::
+	message PalletTown_Text_BrineySailToPetalburgQuestion
+	msgbox PalletTown_Text_BrineySailToPetalburgQuestion, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, PalletTown_EventScript_StayHere
+	goto PalletTown_EventScript_SailToPetalburg
+	end
+
+PalletTown_EventScript_DeliveredCoffee::
+	message Route109_Text_BrineyWhereAreWeBound
+	waitmessage
+	multichoicedefault 21, 8, MULTI_BRINEY_OFF_DEWFORD, 1, FALSE
+	switch VAR_RESULT
+	case 0, Route109_EventScript_SailToDewford
+	case 1, Route109_EventScript_ChoseNotToSail
+	case MULTI_B_PRESSED, Route109_EventScript_ChoseNotToSail
+	end
+
+PalletTown_Text_BrineySailToPetalburgQuestion:
+	.string "MR. BRINEY: I thought you're supposed\n"
+	.string "to deliver the COFFEE.\p"
+	.string "Would you like to sail back to\n"
+	.string "PETALBURG, then?$"
+
+PalletTown_EventScript_StayHere::
+	msgbox PalletTown_Text_BrineyDeliverCoffee, MSGBOX_DEFAULT
+	release
+	end
+
+PalletTown_Text_BrineyDeliverCoffee:
+	.string "MR. BRINEY: Then you go on and deliver\n"
+	.string "the COFFEE. I'll be waiting.$"
+
+PalletTown_EventScript_SailToPetalburg::
+	msgbox PalletTown_Text_BrineyPetalburgItIs, MSGBOX_DEFAULT
+	closemessage
+	goto PalletTown_EventScript_StartDepartForPetalBurg
+	end
+
+PalletTown_Text_BrineyPetalburgItIs:
+	.string "MR. BRINEY: PETALBURG it is, then!\p"
+	.string "Anchors aweigh!\n"
+	.string "PEEKO, we're setting sail, my darling!$"
+
+PalletTown_EventScript_StartDepartForPetalBurg::
+	call EventScript_BackupMrBrineyLocation
+	setobjectsubpriority LOCALID_KANTO_BRINEY, MAP_PALLET_TOWN, 0
+	setobjectsubpriority LOCALID_PLAYER, MAP_PALLET_TOWN, 0
+	applymovement LOCALID_KANTO_BRINEY, PalletTown_Movement_BrineyEnterBoat
+	waitmovement 0
+	removeobject LOCALID_KANTO_BRINEY
+	switch VAR_FACING
+	case DIR_SOUTH, PalletTown_EventScript_EnterBoatSouth
+	case DIR_WEST, PalletTown_EventScript_EnterBoatWest
+	case DIR_EAST, PalletTown_EventScript_EnterBoatEast
+	end
+
+PalletTown_Movement_BrineyEnterBoat:
+	walk_down
+	step_end
+
+PalletTown_EventScript_EnterBoatSouth::
+	applymovement LOCALID_PLAYER, PalletTown_Movement_PlayerEnterBoatSouth
+	waitmovement 0
+	goto PalletTown_EventScript_DoSailToPetalburg
+	end
+
+PalletTown_EventScript_EnterBoatEast::
+	applymovement LOCALID_PLAYER, PalletTown_Movement_PlayerEnterBoatEast
+	waitmovement 0
+	goto PalletTown_EventScript_DoSailToPetalburg
+	end
+
+PalletTown_EventScript_EnterBoatWest::
+	applymovement LOCALID_PLAYER, PalletTown_Movement_PlayerEnterBoatWest
+	waitmovement 0
+	goto PalletTown_EventScript_DoSailToPetalburg
+	end
+
+PalletTown_Movement_PlayerEnterBoatSouth:
+	walk_down
+	walk_down
+	step_end
+
+PalletTown_Movement_PlayerEnterBoatEast:
+	walk_right
+	walk_down
+	step_end
+
+PalletTown_Movement_PlayerEnterBoatWest:
+	walk_left
+	walk_down
+	step_end
+
+PalletTown_EventScript_DoSailToPetalburg::
+	setobjectsubpriority LOCALID_KANTO_BRINEY, MAP_ROUTE104, 0
+	setobjectsubpriority LOCALID_PLAYER, MAP_PALLET_TOWN, 0
+	removeobject LOCALID_KANTO_BRINEY
+	hideobjectat LOCALID_PLAYER, MAP_PALLET_TOWN
+	applymovement LOCALID_PLAYER, PalletTown_Movement_RotateUp
+	call Common_EventScript_PlayBrineysBoatMusic
+	setvar VAR_MAP_SCENE_PALLET_TOWN_BOAT, 1
+	setvar VAR_BOARD_BRINEY_BOAT_STATE, 4
+	warp MAP_ROUTE104, 12, 52
+	waitstate
+	end
+
+PalletTown_Movement_RotateUp:
+	walk_in_place_faster_up
+	step_end

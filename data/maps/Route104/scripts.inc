@@ -1,15 +1,31 @@
 Route104_MapScripts::
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, Route104_OnFrame
+	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, Route104_OnWarp
 	map_script MAP_SCRIPT_ON_TRANSITION, Route104_OnTransition
 	.byte 0
 
 Route104_OnFrame:
 	map_script_2 VAR_BOARD_BRINEY_BOAT_STATE, 1, Route104_EventScript_StartSailToDewford
+	map_script_2 VAR_BOARD_BRINEY_BOAT_STATE, 3, Route104_EventScript_StartSailToKanto
+	map_script_2 VAR_BOARD_BRINEY_BOAT_STATE, 4, Route104_EventScript_ReturnHomeFromAbroad
 	.2byte 0
+
+Route104_OnWarp::
+	map_script_2 VAR_BOARD_BRINEY_BOAT_STATE, 4, Route104_EventScript_ReadyPlayerForScene
+	.2byte 0
+
+Route104_EventScript_ReadyPlayerForScene::
+	turnobject LOCALID_PLAYER, DIR_EAST
+	end
 
 Route104_EventScript_StartSailToDewford::
 	lockall
 	goto Route104_EventScript_SailToDewford
+	end
+
+Route104_EventScript_StartSailToKanto::
+	lockall
+	goto Route104_EventScript_SailToKanto
 	end
 
 Route104_OnTransition:
@@ -30,6 +46,7 @@ Route104_EventScript_HideWhiteHerbFlorist::
 
 Route104_EventScript_TrySetRivalPos::
 	goto_if_ge VAR_BOARD_BRINEY_BOAT_STATE, 1, Route104_EventScript_DontSetRivalPos
+	goto_if_ge VAR_BOARD_BRINEY_BOAT_STATE, 3, Route104_EventScript_DontSetRivalPos
 	goto_if_set FLAG_MET_RIVAL_RUSTBORO, Route104_EventScript_DontSetRivalPos
 	goto_if_unset FLAG_REGISTER_RIVAL_POKENAV, Route104_EventScript_DontSetRivalPos
 	setobjectxyperm LOCALID_ROUTE104_RIVAL, 17, 52
@@ -342,6 +359,23 @@ Route104_EventScript_Girl2::
 	msgbox Route104_Text_ImNotATrainer, MSGBOX_NPC
 	end
 
+Route104_EventScript_SailToKanto::
+	setobjectsubpriority LOCALID_ROUTE104_BRINEY, MAP_ROUTE104, 0
+	setobjectsubpriority LOCALID_PLAYER, MAP_ROUTE104, 0
+	applymovement LOCALID_ROUTE104_BRINEY, Route104_Movement_BrineyBoardBoat
+	waitmovement 0
+	removeobject LOCALID_ROUTE104_BRINEY
+	applymovement LOCALID_PLAYER, Route104_Movement_PlayerBoardBoat
+	waitmovement 0
+	hideobjectat LOCALID_PLAYER, MAP_ROUTE104
+	call Common_EventScript_PlayBrineysBoatMusic
+	setflag FLAG_HIDE_MR_BRINEY_PALLET_TOWN
+	setvar VAR_MAP_SCENE_PALLET_TOWN_BOAT, 1
+	setvar VAR_BOARD_BRINEY_BOAT_STATE, 0
+	warp MAP_PALLET_TOWN, 9, 16
+	waitstate
+	end
+
 Route104_EventScript_SailToDewford::
 	setobjectsubpriority LOCALID_ROUTE104_BRINEY, MAP_ROUTE104, 0
 	setobjectsubpriority LOCALID_PLAYER, MAP_ROUTE104, 0
@@ -418,6 +452,36 @@ Route104_EventScript_LandedInDewford::
 	msgbox DewfordTown_Text_BrineyLandedInDewford, MSGBOX_DEFAULT
 	releaseall
 	end
+
+Route104_EventScript_ReturnHomeFromAbroad::
+	lockall
+	addobject LOCALID_ROUTE104_BOAT
+	resetobjectsubpriority LOCALID_PLAYER, MAP_ROUTE104
+	showobjectat LOCALID_PLAYER, MAP_ROUTE104
+	call Common_EventScript_StopBrineysBoatMusic
+	applymovement LOCALID_PLAYER, Route104_Movement_ExitBoatKanto
+	waitmovement 0
+	showobjectat LOCALID_PLAYER, MAP_ROUTE104
+	clearflag FLAG_HIDE_BRINEYS_HOUSE_MR_BRINEY
+	clearflag FLAG_HIDE_BRINEYS_HOUSE_PEEKO
+	clearflag FLAG_HIDE_ROUTE_104_MR_BRINEY_BOAT
+	setflag FLAG_HIDE_MR_BRINEY_PALLET_TOWN
+	setflag FLAG_HIDE_MR_BRINEY_BOAT_PALLET_TOWN
+	hideobjectat LOCALID_KANTO_BRINEY, MAP_PALLET_TOWN
+	hideobjectat LOCALID_KANTO_BOAT, MAP_PALLET_TOWN
+	setvar VAR_BOARD_BRINEY_BOAT_STATE, 2
+	resetobjectsubpriority LOCALID_PLAYER, MAP_DEWFORD_TOWN
+	warp MAP_ROUTE104_MR_BRINEYS_HOUSE, 5, 4
+	copyvar VAR_BRINEY_LOCATION, VAR_0x8008
+	waitstate
+	release
+	end
+
+Route104_Movement_ExitBoatKanto:
+	walk_right
+	walk_right
+	walk_right
+	step_end
 
 Route104_Movement_SailToDewfordBeforeDadCalls:
 	walk_down
