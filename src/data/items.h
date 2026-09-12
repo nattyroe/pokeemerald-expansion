@@ -14626,6 +14626,23 @@ const struct ItemInfo gItemsInfo[] =
         .iconPalette = gItemIconPalette_Tea,
     },
 
+    [ITEM_COFFEE] =
+    {
+        .name = ITEM_NAME("Coffee"),
+        .pluralName = ITEM_PLURAL_NAME("Coffees"),
+        .price = 0,
+        .description = COMPOUND_STRING(
+            "A energy-giving\n"
+            "coffee prepared by\n"
+            "mom."),
+        .importance = 1,
+        .pocket = POCKET_KEY_ITEMS,
+        .type = ITEM_USE_BAG_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
+        .iconPic = gItemIcon_Coffee,
+        .iconPalette = gItemIconPalette_Coffee,
+    },
+
     [ITEM_RUBY] =
     {
         .name = ITEM_NAME("Ruby"),

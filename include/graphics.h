@@ -1659,6 +1659,8 @@ extern const u32 gItemIcon_RainbowPass[];
 extern const u16 gItemIconPalette_RainbowPass[];
 extern const u32 gItemIcon_Tea[];
 extern const u16 gItemIconPalette_Tea[];
+extern const u32 gItemIcon_Coffee[];
+extern const u16 gItemIconPalette_Coffee[];
 extern const u32 gItemIcon_Gem[];
 extern const u16 gItemIconPalette_Ruby[];
 extern const u16 gItemIconPalette_Sapphire[];
