@@ -894,6 +894,7 @@ LittlerootTown_EventScript_SetReceivedRunningShoes::
 
 LittlerootTown_EventScript_GiveRunningShoes::
 	msgbox LittlerootTown_Text_TakeThisCoffee, MSGBOX_DEFAULT
+	clearflag FLAG_DELIVERED_OLD_MAN_COFFEE
 	playfanfare MUS_OBTAIN_ITEM
 	giveitem ITEM_COFFEE
 	msgbox LittlerootTown_Text_WearTheseRunningShoes, MSGBOX_DEFAULT
@@ -929,8 +930,10 @@ LittlerootTown_Text_TakeThisCoffee:
 	.string "You got it from PROF. BIRCH. How nice!\p"
 	.string "You're your father's child, all right.\n"
 	.string "You look good together with POKéMON!\p"
-	.string "Now that you can venture out, can you\n"
-	.string "do me a give your uncle some COFFEE?\p"
+	.string "Now that you can venture out,\n"
+	.string "I need your help.\p"
+	.string "Can you do me a favor and\n"
+	.string "take some COFFEE to your uncle?\p"
 	.string "Word is he's cauing a bit of a stir\n"
 	.string "over in VIRIDIAN.$"
 

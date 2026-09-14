@@ -288,8 +288,10 @@ static bool8 LoadBattlerSpriteGfx(enum BattlerId battler)
             enum TrainerPicID trainerPicId = GetPlayerTrainerPic(gSaveBlock2Ptr->playerGender, GAME_VERSION);
             LoadSpritePaletteWithTag(GetTrainerBackPicPalette(trainerPicId), GetTrainerPicTag(trainerPicId, FALSE));
         }
-        else if (gBattleTypeFlags & BATTLE_TYPE_CATCH_TUTORIAL && position == B_POSITION_PLAYER_LEFT)
-            LoadSpritePaletteWithTag(GetTrainerBackPicPalette(CATCH_TUTORIAL_TRAINER_PIC), GetTrainerPicTag(CATCH_TUTORIAL_TRAINER_PIC, FALSE));
+        else if (gBattleTypeFlags & BATTLE_TYPE_HOENN_TUTORIAL && position == B_POSITION_PLAYER_LEFT)
+            LoadSpritePaletteWithTag(GetTrainerBackPicPalette(TRAINER_PIC_WALLY), GetTrainerPicTag(TRAINER_PIC_WALLY, FALSE));
+        else if (gBattleTypeFlags & BATTLE_TYPE_KANTO_TUTORIAL && position == B_POSITION_PLAYER_LEFT)
+            LoadSpritePaletteWithTag(GetTrainerBackPicPalette(TRAINER_PIC_OLD_MAN), GetTrainerPicTag(TRAINER_PIC_OLD_MAN, FALSE));
         else if (!gBattleSpritesDataPtr->battlerData[battler].behindSubstitute)
             BattleLoadMonSpriteGfx(GetBattlerMon(battler), battler);
         else
@@ -345,13 +347,23 @@ void CreateBattlerSprite(enum BattlerId battler)
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
             gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
         }
-        else if (gBattleTypeFlags & BATTLE_TYPE_CATCH_TUTORIAL && position == B_POSITION_PLAYER_LEFT)
+        else if (gBattleTypeFlags & BATTLE_TYPE_HOENN_TUTORIAL && position == B_POSITION_PLAYER_LEFT)
         {
-            SetMultiuseSpriteTemplateToTrainerBack(CATCH_TUTORIAL_TRAINER_PIC, position);
+            SetMultiuseSpriteTemplateToTrainerBack(TRAINER_PIC_WALLY, position);
             gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50,
-                                                (8 - GetTrainerBackPicCoords(CATCH_TUTORIAL_TRAINER_PIC)->size) * 4 + 80,
+                                                (8 - GetTrainerBackPicCoords(TRAINER_PIC_WALLY)->size) * 4 + 80,
                                                  GetBattlerSpriteSubpriority(0));
-            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(GetTrainerPicTag(CATCH_TUTORIAL_TRAINER_PIC, FALSE));
+            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(GetTrainerPicTag(TRAINER_PIC_WALLY, FALSE));
+            gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
+            gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
+        }
+        else if (gBattleTypeFlags & BATTLE_TYPE_KANTO_TUTORIAL && position == B_POSITION_PLAYER_LEFT)
+        {
+            SetMultiuseSpriteTemplateToTrainerBack(TRAINER_PIC_OLD_MAN, position);
+            gBattlerSpriteIds[battler] = CreateSprite(&gMultiuseSpriteTemplate, 0x50,
+                                                (8 - GetTrainerBackPicCoords(TRAINER_PIC_OLD_MAN)->size) * 4 + 80,
+                                                 GetBattlerSpriteSubpriority(0));
+            gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = IndexOfSpritePaletteTag(GetTrainerPicTag(TRAINER_PIC_OLD_MAN, FALSE));
             gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
             gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
         }
@@ -388,7 +400,7 @@ static void CreateHealthboxSprite(enum BattlerId battler)
         enum BattlerPosition position = GetBattlerPosition(battler);
         if (gBattleTypeFlags & BATTLE_TYPE_SAFARI && position == B_POSITION_PLAYER_LEFT)
             healthboxSpriteId = CreateSafariPlayerHealthboxSprites();
-        else if (gBattleTypeFlags & BATTLE_TYPE_CATCH_TUTORIAL && position == B_POSITION_PLAYER_LEFT)
+        else if (gBattleTypeFlags & (BATTLE_TYPE_HOENN_TUTORIAL | BATTLE_TYPE_KANTO_TUTORIAL) && position == B_POSITION_PLAYER_LEFT)
             return;
         else
             healthboxSpriteId = CreateBattlerHealthboxSprites(battler);

@@ -1037,9 +1037,6 @@ static void Cmd_setchargingturn(void)
 
 static bool32 ShouldSkipFRLGAccuracyCheck(void)
 {
-    if (!IS_FRLG)
-        return FALSE;
-
     if ((gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE
      && (!BtlCtrl_OakOldMan_TestState2Flag(1) || !BtlCtrl_OakOldMan_TestState2Flag(2))
      && GetMovePower(gCurrentMove) != 0
@@ -10056,7 +10053,7 @@ static void Cmd_handleballthrow(void)
         MarkBattlerForControllerExec(gBattlerAttacker);
         gBattlescriptCurrInstr = BattleScript_TrainerBallBlock;
     }
-    else if (gBattleTypeFlags & BATTLE_TYPE_CATCH_TUTORIAL)
+    else if (gBattleTypeFlags & (BATTLE_TYPE_HOENN_TUTORIAL | BATTLE_TYPE_KANTO_TUTORIAL))
     {
         BtlController_EmitBallThrowAnim(gBattlerAttacker, B_COMM_TO_CONTROLLER, BALL_3_SHAKES_SUCCESS);
         MarkBattlerForControllerExec(gBattlerAttacker);

@@ -2485,7 +2485,7 @@ void BufferStringBattle(enum StringID stringID, enum BattlerId battler)
                 stringPtr = sText_LegendaryPkmnAppeared;
             else if (IsDoubleBattle() && IsValidForBattle(GetBattlerMon(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
                 stringPtr = sText_TwoWildPkmnAppeared;
-            else if (gBattleTypeFlags & BATTLE_TYPE_CATCH_TUTORIAL)
+            else if (gBattleTypeFlags & (BATTLE_TYPE_HOENN_TUTORIAL | BATTLE_TYPE_KANTO_TUTORIAL))
                 stringPtr = sText_WildPkmnAppearedPause;
             else
                 stringPtr = sText_WildPkmnAppeared;
@@ -3520,9 +3520,9 @@ u32 BattleStringExpandPlaceholders(const u8 *src, u8 *dst, u32 dstSize)
                 break;
             case B_TXT_ATK_TRAINER_NAME_WITH_CLASS:
                 toCpy = textStart;
-                if (gBattleTypeFlags & BATTLE_TYPE_CATCH_TUTORIAL)
+                if (gBattleTypeFlags & (BATTLE_TYPE_HOENN_TUTORIAL | BATTLE_TYPE_KANTO_TUTORIAL))
                 {
-                    if (IS_FRLG)
+                    if (gBattleTypeFlags & BATTLE_TYPE_KANTO_TUTORIAL)
                         textStart = StringCopy(textStart, COMPOUND_STRING("The old man"));
                     else
                         textStart = StringCopy(textStart, COMPOUND_STRING("WALLY"));

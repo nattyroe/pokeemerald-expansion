@@ -272,8 +272,10 @@ static void InitBtlControllersInternal(void)
                 gBattlerControllerFuncs[GetBattlerPosition(B_BATTLER_0)] = SetControllerToRecordedPlayer;
             else if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
                 gBattlerControllerFuncs[GetBattlerPosition(B_BATTLER_0)] = SetControllerToSafari;
-            else if (gBattleTypeFlags & BATTLE_TYPE_CATCH_TUTORIAL)
-                gBattlerControllerFuncs[GetBattlerPosition(B_BATTLER_0)] = IS_FRLG ? SetControllerToOakOrOldMan : SetControllerToWally;
+            else if (gBattleTypeFlags & BATTLE_TYPE_HOENN_TUTORIAL)
+                gBattlerControllerFuncs[GetBattlerPosition(B_BATTLER_0)] = SetControllerToWally;
+            else if (gBattleTypeFlags & BATTLE_TYPE_KANTO_TUTORIAL)
+                gBattlerControllerFuncs[GetBattlerPosition(B_BATTLER_0)] = SetControllerToOakOrOldMan;
             else if (IS_FRLG && (gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE))
                 gBattlerControllerFuncs[gBattlerPositions[B_BATTLER_0]] = SetControllerToOakOrOldMan;
             else if (isAIvsAI)
@@ -1986,7 +1988,7 @@ static bool8 ShouldDoSlideInAnim(enum BattlerId battler)
 
     if (gBattleTypeFlags & (
         BATTLE_TYPE_LINK | BATTLE_TYPE_DOUBLE | BATTLE_TYPE_FRONTIER | BATTLE_TYPE_FIRST_BATTLE |
-        BATTLE_TYPE_SAFARI | BATTLE_TYPE_CATCH_TUTORIAL | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TWO_OPPONENTS |
+        BATTLE_TYPE_SAFARI | BATTLE_TYPE_KANTO_TUTORIAL | BATTLE_TYPE_HOENN_TUTORIAL | BATTLE_TYPE_EREADER_TRAINER | BATTLE_TYPE_TWO_OPPONENTS |
         BATTLE_TYPE_INGAME_PARTNER | BATTLE_TYPE_RECORDED | BATTLE_TYPE_TRAINER_HILL)
     )
         return FALSE;
@@ -3021,7 +3023,7 @@ void BtlController_HandleHidePartyStatusSummary(enum BattlerId battler)
 
 void BtlController_HandleBattleAnimation(enum BattlerId battler)
 {
-    if ((gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_CATCH_TUTORIAL))
+    if ((gBattleTypeFlags & (BATTLE_TYPE_SAFARI | BATTLE_TYPE_HOENN_TUTORIAL | BATTLE_TYPE_KANTO_TUTORIAL))
         || IsControllerOakOldMan(battler)
         || !IsBattleSEPlaying(battler))
     {

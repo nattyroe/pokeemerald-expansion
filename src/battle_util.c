@@ -7928,7 +7928,7 @@ s32 CalcCritChanceStageGen1(struct DamageContext *ctx)
 static bool32 IsCriticalHit(struct DamageContext *ctx)
 {
 
-    if ((gBattleTypeFlags & (BATTLE_TYPE_CATCH_TUTORIAL | BATTLE_TYPE_POKEDUDE))
+    if ((gBattleTypeFlags & (BATTLE_TYPE_HOENN_TUTORIAL | BATTLE_TYPE_KANTO_TUTORIAL | BATTLE_TYPE_POKEDUDE))
     || ((gBattleTypeFlags & BATTLE_TYPE_FIRST_BATTLE) && (!IS_FRLG || !BtlCtrl_OakOldMan_TestState2Flag(1))))
         return FALSE;
     if (ctx->isSelfInflicted)

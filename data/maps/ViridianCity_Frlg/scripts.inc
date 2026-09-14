@@ -106,7 +106,7 @@ ViridianCity_EventScript_TutorialOldMan::
 ViridianCity_EventScript_AskIfTeachyTVHelpful::
 	msgbox ViridianCity_Text_HowsTeachyTVHelping, MSGBOX_YESNO
 	goto_if_eq VAR_RESULT, NO, ViridianCity_EventScript_TeachyTVNotHelpful
-	msgbox ViridianCity_Text_MyGrandsonOnTheShow
+	msgbox ViridianCity_Text_MySonOnTheShow
 	release
 	end
 
@@ -134,6 +134,7 @@ ViridianCity_EventScript_WatchToLearnBasics::
 @ Unused. Starts battle after the post battle text, which is odd.
 ViridianCity_EventScript_TutorialUnused::
 	msgbox ViridianCity_Text_ThatWasEducationalTakeThis
+	call Common_EventScript_OutOfCenterPartyHeal
 	special StartOldManTutorialBattle
 	waitstate
 	release
@@ -188,10 +189,62 @@ ViridianCity_EventScript_RoadBlocked::
 	textcolor NPC_TEXT_COLOR_MALE
 	msgbox ViridianCity_Text_ThisIsPrivateProperty
 	closemessage
+	checkitem ITEM_COFFEE
+	goto_if_eq VAR_RESULT, FALSE, ViridianCity_EventScript_EndRoadBlocked
+	removeitem ITEM_COFFEE
+	setflag FLAG_DELIVERED_OLD_MAN_COFFEE
+	delay 30
+	msgbox ViridianCity_Text_IsThatCoffee
+	closemessage
+	delay 60
+	msgbox ViridianCity_Text_GiveCoffee
+	closemessage
+	removeobject LOCALID_TUTORIAL_MAN
+	setvar VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_OLD_MAN_1
+	addobject LOCALID_TUTORIAL_MAN
+	setobjectxyperm LOCALID_TUTORIAL_MAN, 21, 8
+	setobjectmovementtype LOCALID_TUTORIAL_MAN, MOVEMENT_TYPE_FACE_DOWN
+	addobject LOCALID_TUTORIAL_MAN
+	setvar VAR_MAP_SCENE_VIRIDIAN_CITY_OLD_MAN, 1
+	msgbox ViridianCity_Text_ThanksForCoffee
+	closemessage
+	applymovement LOCALID_TUTORIAL_MAN, ViridianCity_Movement_MoveTutorGuy
+	waitmovement 0
+	removeobject LOCALID_TUTORIAL_MAN
+	setobjectmovementtype LOCALID_TUTORIAL_MAN, MOVEMENT_TYPE_LOOK_AROUND
+	addobject LOCALID_TUTORIAL_MAN
+	releaseall
+	end
+
+ViridianCity_EventScript_EndRoadBlocked::
 	applymovement LOCALID_PLAYER, ViridianCity_Movement_WalkDown
 	waitmovement 0
 	releaseall
 	end
+
+ViridianCity_Text_IsThatCoffee::
+	.string "Wait...\p"
+	.string "Could that be?\p"
+	.string "That smells like COFFEE!\n"
+	.string "Give me that!$"
+
+ViridianCity_Text_GiveCoffee::
+	.string "Ahhh\p"
+	.string "That really hit the spot\p"
+	.string "Sorry about that,\n"
+	.string "Let me get up.$"
+
+ViridianCity_Text_ThanksForCoffee::
+	.string "Thanks for the COFFEE,\n"
+	.string "I feel a lot better.\p"
+	.string "Good enough to catch a POKéMON!$"
+
+ViridianCity_Movement_MoveTutorGuy::
+	walk_up
+	walk_up
+	walk_up
+	walk_in_place_fast_down
+	step_end
 
 ViridianCity_Movement_WalkDown::
 	walk_down
@@ -222,6 +275,7 @@ ViridianCity_EventScript_TutorialTriggerRight::
 ViridianCity_EventScript_DoTutorialBattle::
 	msgbox ViridianCity_Text_ShowYouHowToCatchMons
 	closemessage
+	call Common_EventScript_OutOfCenterPartyHeal
 	special StartOldManTutorialBattle
 	waitstate
 	lock
@@ -306,7 +360,7 @@ ViridianCity_Text_WatchThatToLearnBasics::
 ViridianCity_Text_WeakenMonsFirstToCatch::
 	.string "Well, now, I've had my coffee, and\n"
 	.string "that's what I need to get going!\p"
-	.string "But I made it too strong.\n"
+	.string "But it was too strong.\n"
 	.string "It gave me a headache…\p"
 	.string "Incidentally, are you filling your\n"
 	.string "POKéDEX?\p"
@@ -316,14 +370,14 @@ ViridianCity_Text_WeakenMonsFirstToCatch::
 ViridianCity_Text_HowsTeachyTVHelping::
 	.string "Well, now, I've had my coffee, and\n"
 	.string "that's what I need to get going!\p"
-	.string "But I made it too strong.\n"
+	.string "But it was too strong.\n"
 	.string "It gave me a headache…\p"
 	.string "Incidentally, is my old TEACHY TV\n"
 	.string "helping you?$"
 
-ViridianCity_Text_MyGrandsonOnTheShow::
+ViridianCity_Text_MySonOnTheShow::
 	.string "Wahaha!\n"
-	.string "It's my grandson on the show!\p"
+	.string "It's my son on the show!\p"
 	.string "Since he's the one doing the\n"
 	.string "teaching, you're bound to learn.$"
 
