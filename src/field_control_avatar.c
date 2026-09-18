@@ -37,6 +37,7 @@
 #include "vs_seeker.h"
 #include "wild_encounter.h"
 #include "wild_encounter_ow.h"
+#include "regions.h"
 #include "constants/event_bg.h"
 #include "constants/event_objects.h"
 #include "constants/field_poison.h"
@@ -481,7 +482,7 @@ static const u8 *GetInteractedMetatileScript(struct MapPosition *position, u8 me
 
     if (MetatileBehavior_IsPlayerFacingTVScreen(metatileBehavior, direction) == TRUE)
     {
-        if (IS_FRLG)
+        if (GetRegionForSectionId(gMapHeader.regionMapSectionId) != REGION_HOENN)
             return EventScript_PlayerFacingTVScreen;
         else
             return EventScript_TV;
